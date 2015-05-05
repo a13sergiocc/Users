@@ -70,8 +70,15 @@ class UsersController extends Controller {
 	 */
 	public function show($id)
 	{
-		//
+		$usuario = User::find($id);
+
+		if($usuario == null) {
+			return Redirect::to('users');
+		}
+
+		return view('perfil')->withElusuario($usuario);
 	}
+	
 	/**
 	 * Show the form for editing the specified resource.
 	 *
@@ -80,7 +87,13 @@ class UsersController extends Controller {
 	 */
 	public function edit($id)
 	{
-		//
+		$usuario = User::find($id);
+		
+		if($usuario == null) {
+			return Redirect::to('users');
+		}
+
+		return view('editar')->withId($id);
 	}
 	/**
 	 * Update the specified resource in storage.
@@ -88,9 +101,37 @@ class UsersController extends Controller {
 	 * @param  int  $id
 	 * @return Response
 	 */
-	public function update($id)
+	public function update($id, Request $request)
 	{
-		//
+		$reglas=array(
+			'username'=>'unique:users',
+			'email' => 'email|unique:users',
+			'password' => 'min:6',
+			);
+		
+		$validator=Validator::make($request->all(), $reglas);
+
+		if ($validator->fails())
+		{
+			return Redirect::to('/users'.$id.'/edit')
+				->withInput()
+				->withErrors($validator->messages());
+		}
+
+		$usuario = User::find($id);
+		
+		if($request->input('username'))
+			$usuario->username=$request->input('username');		
+		if($request->input('email'))
+			$usuario->email=$request->input('email');		
+		if($request->input('bio'))
+			$usuario->bio=$request->input('bio');		
+		if($request->input('password'))
+			$usuario->password=Hash::make($request->input('password'));
+
+		$usuario->save();
+
+		return Redirect::to('/users/'.$id);
 	}
 	/**
 	 * Remove the specified resource from storage.
@@ -100,6 +141,13 @@ class UsersController extends Controller {
 	 */
 	public function destroy($id)
 	{
-		//
+		$usuario = User::find($id);
+
+		if($usuario != null) {
+			$usuario->delete();
+		}
+
+		return Redirect::to('users');
+
 	}
 }

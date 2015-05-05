@@ -8,10 +8,11 @@ Usuarios de la app
 <div class="container">
 	<div class="row">
 		<div class="col-md-10 col-md-offset-1">
-			asdasd
-
+			<h1>Listado de usuario</h1>
 			@foreach ($users as $usuario)
-				{{$usuario->username}}
+				<a href="/users/{{$usuario->id}}">
+					{{$usuario->username}}
+				</a>
 			@endforeach
 		</div>
 	</div>
