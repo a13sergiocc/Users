@@ -8,7 +8,17 @@ use App\User;
 use Validator;
 use Redirect;
 use Hash;
+
 class UsersController extends Controller {
+
+	public function __construct()
+	{
+		// Indicamos los métodos que va a utilizar un determinado middleware
+		$this->middleware('existe', ['only'=>['show', 'edit', 'update', 'destroy']]);
+		$this->middleware('propietario', ['only'=>['edit', 'update', 'destroy']]);
+	}
+	
+
 	/**
 	 * Display a listing of the resource.
 	 *
@@ -70,13 +80,7 @@ class UsersController extends Controller {
 	 */
 	public function show($id)
 	{
-		$usuario = User::find($id);
-
-		if($usuario == null) {
-			return Redirect::to('users');
-		}
-
-		return view('perfil')->withElusuario($usuario);
+		return view('perfil')->withElusuario(User::find($id));
 	}
 	
 	/**
@@ -87,11 +91,11 @@ class UsersController extends Controller {
 	 */
 	public function edit($id)
 	{
-		$usuario = User::find($id);
+	/*	$usuario = User::find($id);
 		
 		if($usuario == null) {
 			return Redirect::to('users');
-		}
+		}*/
 
 		return view('editar')->withId($id);
 	}

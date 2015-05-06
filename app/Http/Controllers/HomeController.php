@@ -1,5 +1,9 @@
 <?php namespace App\Http\Controllers;
 
+use Redirect;
+use Auth;
+use Request;
+
 class HomeController extends Controller {
 
 	/*
@@ -20,7 +24,7 @@ class HomeController extends Controller {
 	 */
 	public function __construct()
 	{
-		$this->middleware('auth');
+		//$this->middleware('auth');
 	}
 
 	/**
@@ -28,9 +32,35 @@ class HomeController extends Controller {
 	 *
 	 * @return Response
 	 */
-	public function index()
+	public function getIndex()
 	{
-		return view('home');
+		return Redirect::to('users');
 	}
 
+	public function getLogin()
+	{
+		return view('login');
+	}
+
+	public function postLogin() 
+	{
+		$credenciales = array(
+			'username' => Request::input('username'),
+			'password' => Request::input('password')
+		);
+
+		// Auth::validate() -> Nos valida pero no loguea
+		// Auth::atempt() -> Nos valida y loguea
+
+		if(Auth::attempt($credenciales, true))
+			return Redirect::to('users');
+		
+		return Redirect::to('login')->withInput();
+	}
+
+	public function getLogout()
+	{
+		Auth::logout();
+		return Redirect::to('users');
+	}
 }

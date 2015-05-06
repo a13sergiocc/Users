@@ -11,8 +11,6 @@
 |
 */
 
-Route::get('/', function() {
-	return "hola";
-});
-
 Route::resource('users', 'UsersController');
+
+Route::controller('/', 'HomeController');
